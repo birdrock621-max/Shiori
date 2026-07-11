@@ -1,0 +1,28 @@
+---
+interface Props {
+  stats: {
+    records: number;
+    days: number;
+    tags: number;
+    projects: number;
+    completedTasks: number;
+  };
+}
+
+const { stats } = Astro.props;
+const items = [
+  { value: stats.records, label: '収蔵記録', unit: '冊' },
+  { value: stats.days, label: '記録した日', unit: '日' },
+  { value: stats.completedTasks, label: '完了したこと', unit: '件' },
+  { value: stats.projects, label: 'プロジェクト', unit: '件' },
+];
+---
+
+<dl class="stats-strip" aria-label="書庫の統計">
+  {items.map((item) => (
+    <div>
+      <dt>{item.label}</dt>
+      <dd><strong>{item.value}</strong><span>{item.unit}</span></dd>
+    </div>
+  ))}
+</dl>
