@@ -1,0 +1,32 @@
+name: Quality checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Use Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          package-manager-cache: false
+      - name: Install from lockfile
+        run: npm ci --ignore-scripts
+      - name: Validate, test, build, and run scenarios
+        run: npm run test:all
+      - name: Verify Wrangler static asset configuration
+        run: npx --yes wrangler@4.110.0 deploy --dry-run
