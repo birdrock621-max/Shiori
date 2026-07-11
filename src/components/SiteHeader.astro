@@ -1,0 +1,63 @@
+---
+import Icon from './Icon.astro';
+import { siteConfig } from '@/site.config';
+
+const path = Astro.url.pathname;
+---
+
+<header class="site-header" data-site-header>
+  <div class="header-inner">
+    <a class="wordmark" href="/" aria-label={`${siteConfig.name} ホーム`}>
+      <span class="wordmark-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span>{siteConfig.name}</span>
+      <small>personal archive</small>
+    </a>
+
+    <nav class="primary-nav" aria-label="メインナビゲーション">
+      <a href="/" aria-current={path === '/' ? 'page' : undefined}>本棚</a>
+      <a href="/archive/" aria-current={path.startsWith('/archive') ? 'page' : undefined}>目録</a>
+      <a href="/about/" aria-current={path.startsWith('/about') ? 'page' : undefined}>この書庫</a>
+    </nav>
+
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="表示テーマを切り替える" title="表示テーマを切り替える">
+      <span data-theme-icon="system"><Icon name="system" size={18} /></span>
+      <span data-theme-icon="light" hidden><Icon name="sun" size={18} /></span>
+      <span data-theme-icon="dark" hidden><Icon name="moon" size={18} /></span>
+      <span class="sr-only" data-theme-label>端末に合わせる</span>
+    </button>
+  </div>
+</header>
+
+<script>
+  type ThemePreference = 'system' | 'light' | 'dark';
+  const labels = { system: '端末に合わせる', light: '明るいテーマ', dark: '暗いテーマ' };
+  const order: ThemePreference[] = ['system', 'light', 'dark'];
+
+  function applyTheme(theme: ThemePreference) {
+    const resolved = theme === 'system'
+      ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+      : theme;
+    document.documentElement.dataset.theme = resolved;
+    document.documentElement.dataset.themePreference = theme;
+    document.querySelectorAll<HTMLElement>('[data-theme-icon]').forEach((icon) => {
+      icon.hidden = icon.dataset.themeIcon !== theme;
+    });
+    document.querySelectorAll<HTMLElement>('[data-theme-label]').forEach((label) => {
+      label.textContent = labels[theme];
+    });
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const current = (document.documentElement.dataset.themePreference || 'system') as ThemePreference;
+      const next = order[(order.indexOf(current) + 1) % order.length];
+      if (!next) return;
+      localStorage.setItem('shiori-theme', next);
+      applyTheme(next);
+    });
+  });
+
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    if ((document.documentElement.dataset.themePreference || 'system') === 'system') applyTheme('system');
+  });
+</script>

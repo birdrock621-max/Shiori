@@ -1,0 +1,329 @@
+---
+import type { RecordEntry } from '@/lib/records';
+import {
+  bookStyle,
+  formatMonth,
+  formatShortDate,
+  getTaxonomy,
+  groupByMonth,
+  normalizedSearchText,
+  recordHref,
+  typeMeta,
+} from '@/lib/records';
+import Icon from './Icon.astro';
+
+interface Props {
+  records: RecordEntry[];
+  heading?: string;
+  description?: string;
+  syncUrl?: boolean;
+}
+
+const {
+  records,
+  heading = '書庫をひらく',
+  description = '背表紙から眺めても、言葉から探しても。',
+  syncUrl = false,
+} = Astro.props;
+const groups = groupByMonth(records);
+const taxonomy = getTaxonomy(records);
+---
+
+<section class="explorer section-shell" data-archive-explorer data-sync-url={syncUrl ? 'true' : 'false'}>
+  <div class="section-heading explorer-heading">
+    <div>
+      <p class="eyebrow">THE CATALOGUE</p>
+      <h2>{heading}</h2>
+      <p>{description}</p>
+    </div>
+    <div class="view-switcher" role="group" aria-label="表示方法">
+      <button type="button" class="view-button is-active" data-view-button="shelf" aria-pressed="true">
+        <Icon name="books" size={18} />
+        <span>本棚</span>
+      </button>
+      <button type="button" class="view-button" data-view-button="list" aria-pressed="false">
+        <Icon name="filter" size={18} />
+        <span>一覧</span>
+      </button>
+    </div>
+  </div>
+
+  <form class="catalog-controls" data-catalog-form role="search" aria-label="記録を検索・絞り込み">
+    <label class="search-field">
+      <span class="sr-only">キーワードで検索</span>
+      <Icon name="search" size={20} />
+      <input
+        type="search"
+        name="q"
+        placeholder="題名、日付、タグ、プロジェクトから探す"
+        autocomplete="off"
+        data-search-input
+      />
+      <kbd aria-hidden="true">/</kbd>
+    </label>
+
+    <div class="filter-row">
+      <label>
+        <span>年</span>
+        <select name="year" data-filter="year">
+          <option value="">すべて</option>
+          {taxonomy.years.map((year) => <option value={year}>{year}年</option>)}
+        </select>
+      </label>
+      <label>
+        <span>種類</span>
+        <select name="type" data-filter="type">
+          <option value="">すべて</option>
+          {Object.entries(typeMeta).map(([value, meta]) => <option value={value}>{meta.label}</option>)}
+        </select>
+      </label>
+      <label>
+        <span>タグ</span>
+        <select name="tag" data-filter="tag">
+          <option value="">すべて</option>
+          {taxonomy.tags.map((tag) => <option value={tag}>{tag}</option>)}
+        </select>
+      </label>
+      <label>
+        <span>プロジェクト</span>
+        <select name="project" data-filter="project">
+          <option value="">すべて</option>
+          {taxonomy.projects.map((project) => <option value={project}>{project}</option>)}
+        </select>
+      </label>
+      <button class="reset-button" type="reset" data-reset-button>条件をクリア</button>
+    </div>
+  </form>
+
+  <div class="catalog-status" aria-live="polite" aria-atomic="true">
+    <span><strong data-result-count>{records.length}</strong> 冊を表示</span>
+    <span class="status-divider" aria-hidden="true"></span>
+    <span data-active-filter-label>すべての記録</span>
+  </div>
+
+  <div class="shelf-view" data-view="shelf">
+    {groups.map((group) => (
+      <section class="shelf-unit" data-shelf>
+        <header class="shelf-label">
+          <h3>{formatMonth(group.key)}</h3>
+          <span><b data-shelf-count>{group.records.length}</b> volumes</span>
+        </header>
+        <ul class="book-row">
+          {group.records.map((entry) => {
+            const style = bookStyle(entry);
+            const meta = typeMeta[entry.data.type];
+            const searchText = normalizedSearchText(entry);
+            return (
+              <li
+                class="book-slot"
+                style={`--book-height:${style.height}px;--book-width:${style.width}px;--book-tilt:${style.tilt}deg`}
+                data-record-item
+                data-view-item="shelf"
+                data-record-id={entry.id}
+                data-search={searchText}
+                data-year={entry.data.date.getUTCFullYear()}
+                data-type={entry.data.type}
+                data-tags={JSON.stringify(entry.data.tags)}
+                data-project={entry.data.project ?? ''}
+              >
+                <a
+                  class={`book book-${meta.color}`}
+                  href={recordHref(entry)}
+                  aria-label={`${entry.data.title}、${formatShortDate(entry.data.date)}、${meta.label}${entry.data.featured ? '、しおり付き' : ''}`}
+                >
+                  <span class="book-top" aria-hidden="true"></span>
+                  <span class="book-cap" aria-hidden="true">{meta.short}</span>
+                  <span class="book-title">{entry.data.title}</span>
+                  <span class="book-date">{formatShortDate(entry.data.date)}</span>
+                  {entry.data.featured && <span class="book-ribbon" aria-hidden="true">栞</span>}
+                  <span class="book-tooltip" aria-hidden="true">
+                    <b>{entry.data.title}</b>
+                    <small>{entry.data.summary}</small>
+                  </span>
+                </a>
+              </li>
+            );
+          })}
+          <li class="shelf-space" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </li>
+        </ul>
+        <div class="shelf-plank" aria-hidden="true"></div>
+      </section>
+    ))}
+  </div>
+
+  <div class="list-view" data-view="list" hidden>
+    <div class="record-list">
+      {records.map((entry) => {
+        const meta = typeMeta[entry.data.type];
+        return (
+          <article
+            class="record-card"
+            data-record-item
+            data-view-item="list"
+            data-record-id={entry.id}
+            data-search={normalizedSearchText(entry)}
+            data-year={entry.data.date.getUTCFullYear()}
+            data-type={entry.data.type}
+            data-tags={JSON.stringify(entry.data.tags)}
+            data-project={entry.data.project ?? ''}
+          >
+            <a class="record-card-link" href={recordHref(entry)}>
+              <div class={`record-monogram book-${meta.color}`} aria-hidden="true">{meta.short}</div>
+              <div class="record-card-body">
+                <div class="record-card-meta">
+                  <time datetime={entry.data.date.toISOString()}>{formatShortDate(entry.data.date)}</time>
+                  <span>{meta.label}</span>
+                  {entry.data.project && <span>{entry.data.project}</span>}
+                </div>
+                <h3>{entry.data.title}</h3>
+                <p>{entry.data.summary}</p>
+                {entry.data.tags.length > 0 && (
+                  <ul class="tag-list" aria-label="タグ">
+                    {entry.data.tags.slice(0, 5).map((tag) => <li>#{tag}</li>)}
+                    {entry.data.tags.length > 5 && <li>ほか{entry.data.tags.length - 5}件</li>}
+                  </ul>
+                )}
+              </div>
+              <Icon name="arrow" size={20} />
+            </a>
+          </article>
+        );
+      })}
+    </div>
+  </div>
+
+  <div class="catalog-empty" data-catalog-empty hidden>
+    <div class="empty-books" aria-hidden="true"><i></i><i></i><i></i></div>
+    <h3>その条件の本は、まだありません</h3>
+    <p>言葉を短くするか、絞り込みを一つ外してみてください。</p>
+    <button type="button" class="text-button" data-empty-reset>すべての本を表示</button>
+  </div>
+</section>
+
+<script>
+  type CatalogFilters = { q: string; year: string; type: string; tag: string; project: string };
+  const typeLabels: Record<string, string> = { diary: '日記', development: '開発', learning: '学び', task: '達成', activity: '活動', note: 'メモ' };
+  const normalize = (value: string) => value.normalize('NFKC').toLocaleLowerCase('ja').trim();
+
+  document.querySelectorAll<HTMLElement>('[data-archive-explorer]').forEach((explorer) => {
+    const form = explorer.querySelector<HTMLFormElement>('[data-catalog-form]');
+    const search = explorer.querySelector<HTMLInputElement>('[data-search-input]');
+    const resultCount = explorer.querySelector<HTMLElement>('[data-result-count]');
+    const filterLabel = explorer.querySelector<HTMLElement>('[data-active-filter-label]');
+    const empty = explorer.querySelector<HTMLElement>('[data-catalog-empty]');
+    const shelfItems = [...explorer.querySelectorAll<HTMLElement>('[data-view-item="shelf"]')];
+    const allItems = [...explorer.querySelectorAll<HTMLElement>('[data-record-item]')];
+    const syncUrl = explorer.dataset.syncUrl === 'true';
+    if (!form || !search || !resultCount || !filterLabel || !empty) return;
+    const catalogForm = form;
+    const searchInput = search;
+    const countOutput = resultCount;
+    const filterOutput = filterLabel;
+    const emptyState = empty;
+
+    function values() {
+      const data = new FormData(catalogForm);
+      return {
+        q: normalize(String(data.get('q') || '')),
+        year: String(data.get('year') || ''),
+        type: String(data.get('type') || ''),
+        tag: String(data.get('tag') || ''),
+        project: String(data.get('project') || ''),
+      };
+    }
+
+    const tagsByItem = new WeakMap<HTMLElement, string[]>();
+    const searchByItem = new WeakMap<HTMLElement, string>();
+    allItems.forEach((item) => {
+      try { tagsByItem.set(item, JSON.parse(item.dataset.tags || '[]')); }
+      catch { tagsByItem.set(item, []); }
+      searchByItem.set(item, normalize(item.dataset.search || ''));
+    });
+
+    function matches(item: HTMLElement, filters: CatalogFilters) {
+      const tags = tagsByItem.get(item) ?? [];
+      return (!filters.q || (searchByItem.get(item) ?? '').includes(filters.q))
+        && (!filters.year || item.dataset.year === filters.year)
+        && (!filters.type || item.dataset.type === filters.type)
+        && (!filters.tag || tags.includes(filters.tag))
+        && (!filters.project || item.dataset.project === filters.project);
+    }
+
+    function update() {
+      const filters = values();
+      allItems.forEach((item) => { item.hidden = !matches(item, filters); });
+      const visible = shelfItems.filter((item) => !item.hidden).length;
+      countOutput.textContent = String(visible);
+      emptyState.hidden = visible !== 0;
+
+      explorer.querySelectorAll<HTMLElement>('[data-shelf]').forEach((shelf) => {
+        const count = [...shelf.querySelectorAll<HTMLElement>('[data-view-item="shelf"]')].filter((item) => !item.hidden).length;
+        shelf.hidden = count === 0;
+        const label = shelf.querySelector('[data-shelf-count]');
+        if (label) label.textContent = String(count);
+      });
+
+      const active = [filters.year && `${filters.year}年`, filters.type && typeLabels[filters.type], filters.tag && `#${filters.tag}`, filters.project]
+        .filter(Boolean);
+      filterOutput.textContent = active.length || filters.q ? [...active, filters.q && `「${filters.q}」`].filter(Boolean).join(' · ') : 'すべての記録';
+
+      if (syncUrl) {
+        const url = new URL(location.href);
+        Object.entries(filters).forEach(([key, value]) => value ? url.searchParams.set(key, value) : url.searchParams.delete(key));
+        history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
+      }
+    }
+
+    function reset() {
+      catalogForm.reset();
+      update();
+      searchInput.focus();
+    }
+
+    catalogForm.addEventListener('input', update);
+    catalogForm.addEventListener('change', update);
+    catalogForm.addEventListener('reset', () => requestAnimationFrame(update));
+    explorer.querySelector('[data-empty-reset]')?.addEventListener('click', reset);
+
+    explorer.querySelectorAll<HTMLButtonElement>('[data-view-button]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const view = button.dataset.viewButton;
+        if (!view) return;
+        explorer.querySelectorAll<HTMLElement>('[data-view]').forEach((panel) => { panel.hidden = panel.dataset.view !== view; });
+        explorer.querySelectorAll<HTMLButtonElement>('[data-view-button]').forEach((candidate) => {
+          const active = candidate.dataset.viewButton === view;
+          candidate.classList.toggle('is-active', active);
+          candidate.setAttribute('aria-pressed', String(active));
+        });
+        localStorage.setItem('shiori-view', view);
+      });
+    });
+
+    if (syncUrl) {
+      const params = new URLSearchParams(location.search);
+      ['q', 'year', 'type', 'tag', 'project'].forEach((key) => {
+        const control = catalogForm.elements.namedItem(key);
+        if ((control instanceof HTMLInputElement || control instanceof HTMLSelectElement) && params.has(key)) {
+          control.value = params.get(key) ?? '';
+        }
+      });
+    }
+
+    const savedView = localStorage.getItem('shiori-view');
+    if (savedView === 'list') explorer.querySelector<HTMLButtonElement>('[data-view-button="list"]')?.click();
+    update();
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === '/' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName ?? '')) {
+        event.preventDefault();
+        searchInput.focus();
+      }
+      if (event.key === 'Escape' && document.activeElement === searchInput && searchInput.value) {
+        searchInput.value = '';
+        update();
+      }
+    });
+  });
+</script>

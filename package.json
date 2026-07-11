@@ -1,0 +1,30 @@
+{
+  "name": "shiori",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Turn Markdown journals and activity logs into a growing, searchable bookshelf.",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "node scripts/validate-records.mjs && astro build && node scripts/check-built-links.mjs",
+    "preview": "astro preview",
+    "check": "astro check && node scripts/validate-records.mjs",
+    "check:links": "node scripts/check-built-links.mjs",
+    "test": "node --test",
+    "test:scenarios": "node scripts/verify-scenarios.mjs",
+    "validate": "npm run check && npm test && npm run build",
+    "new": "node scripts/new-record.mjs"
+  },
+  "dependencies": {
+    "astro": "7.0.7",
+    "yaml": "2.9.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.9",
+    "typescript": "5.9.3"
+  }
+}
