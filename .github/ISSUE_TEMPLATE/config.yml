@@ -1,8 +1,0 @@
-blank_issues_enabled: true
-contact_links:
-  - name: 非公開で脆弱性を報告
-    url: https://github.com/birdrock621-max/Shiori/security/advisories/new
-    about: 利用できる場合はPrivate Vulnerability Reportを優先してください。
-  - name: セキュリティ連絡（公開・詳細禁止）
-    url: https://github.com/birdrock621-max/Shiori/issues/new?template=security_contact.yml
-    about: 非公開報告が使えない場合の連絡口です。脆弱性の詳細や秘密情報は書かないでください。

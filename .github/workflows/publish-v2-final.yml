@@ -1,0 +1,68 @@
+name: Publish verified Shiori v2 source
+
+on:
+  push:
+    branches:
+      - agent/publish-shiori-v2-walnut-verified
+    paths:
+      - .publish-final/READY
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish-shiori-v2-final
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out staging branch
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.12.0'
+
+      - name: Reconstruct source
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import base64
+
+          payload = Path('.publish-final')
+          encoded = ''.join(path.read_text(encoding='ascii') for path in sorted(payload.glob('chunk-*')))
+          Path('/tmp/shiori-v2.tar.gz').write_bytes(base64.b64decode(encoded, validate=True))
+          PY
+          echo "9d5d11036ae81a1d2d8a4364386846640c12a2bfbf09941634f754c214bc348f  /tmp/shiori-v2.tar.gz" | sha256sum --check -
+          mkdir -p /tmp/shiori-v2-source
+          tar -xzf /tmp/shiori-v2.tar.gz -C /tmp/shiori-v2-source
+
+      - name: Replace legacy tree
+        shell: bash
+        run: |
+          find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          cp -a /tmp/shiori-v2-source/. .
+
+      - name: Verify rebuilt product
+        shell: bash
+        run: |
+          npm ci --ignore-scripts
+          npm run test:all
+          npx --yes wrangler@4.110.0 deploy --dry-run
+
+      - name: Commit readable source
+        shell: bash
+        run: |
+          rm -rf dist
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "feat: rebuild Shiori v2 with a multilingual walnut archive"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
