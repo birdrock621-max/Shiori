@@ -6,6 +6,13 @@ on:
       - agent/publish-shiori-v2-walnut-verified
     paths:
       - .publish-final/READY
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .publish-final/**
+      - .github/workflows/publish-v2-final.yml
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -13,6 +20,9 @@ permissions:
 concurrency:
   group: publish-shiori-v2-final
   cancel-in-progress: false
+
+env:
+  TARGET_BRANCH: ${{ github.head_ref || github.ref_name }}
 
 jobs:
   publish:
@@ -23,6 +33,8 @@ jobs:
     steps:
       - name: Check out staging branch
         uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TARGET_BRANCH }}
 
       - name: Use Node.js
         uses: actions/setup-node@v4
@@ -65,4 +77,4 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           git commit -m "feat: rebuild Shiori v2 with a multilingual walnut archive"
-          git push origin "HEAD:${GITHUB_REF_NAME}"
+          git push origin "HEAD:${TARGET_BRANCH}"
