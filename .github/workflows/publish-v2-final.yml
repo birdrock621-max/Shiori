@@ -41,9 +41,10 @@ jobs:
         with:
           node-version: '22.12.0'
 
-      - name: Reconstruct source
+      - name: Preserve publisher and reconstruct source
         shell: bash
         run: |
+          cp .github/workflows/publish-v2-final.yml /tmp/publish-v2-final.yml
           python3 - <<'PY'
           from pathlib import Path
           import base64
@@ -69,10 +70,12 @@ jobs:
           npm run test:all
           npx --yes wrangler@4.110.0 deploy --dry-run
 
-      - name: Commit readable source
+      - name: Commit readable source without changing workflows
         shell: bash
         run: |
-          rm -rf dist
+          rm -rf dist .github/workflows
+          mkdir -p .github/workflows
+          cp /tmp/publish-v2-final.yml .github/workflows/publish-v2-final.yml
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
