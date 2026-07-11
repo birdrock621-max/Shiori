@@ -13,6 +13,9 @@ import {
 } from '@/lib/records';
 import { siteConfig } from '@/site.config';
 
+const BG_IMAGE_1 = 'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260609_195923_b0ba8ace-1d1d-4f2c-9a28-1ab84b330680.png&w=1280&q=85';
+const BG_IMAGE_2 = 'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260609_201152_bba90a12-bf12-459f-91f0-51f237dbaf3b.png&w=1280&q=85';
+
 const records = visibleRecords(await getCollection('records'));
 const stats = getArchiveStats(records);
 const latest = records[0];
@@ -23,58 +26,82 @@ const recentCutoff = new Date();
 recentCutoff.setUTCMonth(recentCutoff.getUTCMonth() - siteConfig.home.recentMonths);
 const recentRecords = records.filter((entry) => entry.data.date >= recentCutoff);
 const homeRecords = (recentRecords.length > 0 ? recentRecords : records).slice(0, siteConfig.home.recordLimit);
+const heroStyle = `--hero-base:url("${BG_IMAGE_1}");--hero-reveal:url("${BG_IMAGE_2}")`;
 ---
 
-<BaseLayout>
-  <section class="hero section-shell">
-    <div class="hero-copy">
-      <p class="eyebrow">A LIVING PERSONAL ARCHIVE</p>
-      <h1>日々を一冊ずつ、<br /><em>自分だけの書庫へ。</em></h1>
-      <p class="hero-lead">{siteConfig.profile.shortBio}</p>
-      <div class="hero-actions">
-        <a class="primary-button" href="#catalogue">
-          本棚をひらく
-          <Icon name="arrow" size={18} />
-        </a>
-        <a class="secondary-button" href="/about/">この書庫について</a>
+<BaseLayout pageClass="home-immersive" preloadImage={BG_IMAGE_1}>
+  <section
+    class="immersive-hero"
+    style={heroStyle}
+    data-immersive-hero
+    aria-labelledby="hero-title"
+  >
+    <div class="hero-image hero-image-base hero-zoom" aria-hidden="true"></div>
+    <div class="hero-image hero-image-reveal" data-hero-reveal aria-hidden="true"></div>
+    <div class="hero-atmosphere" aria-hidden="true"></div>
+    <div class="hero-grid" aria-hidden="true"></div>
+
+    <div class="hero-heading">
+      <p class="hero-overline hero-anim hero-fade" style="animation-delay:.12s">
+        <span>A LIVING ARCHIVE</span>
+        <span>EST. {siteConfig.startYear}</span>
+      </p>
+      <h1 id="hero-title">
+        <span class="hero-title-serif hero-anim hero-reveal" style="animation-delay:.25s">Layers hold</span>
+        <span class="hero-title-sans hero-anim hero-reveal" style="animation-delay:.42s">日々の物語。</span>
+      </h1>
+      <p class="hero-subline hero-anim hero-fade" style="animation-delay:.58s">
+        Every entry becomes a stratum of the life you are building.
+      </p>
+    </div>
+
+    <div class="hero-bottom-copy hero-bottom-left hero-anim hero-fade" style="animation-delay:.7s">
+      <span class="hero-copy-index">01 / MEMORY STRATA</span>
+      <p>日記、完了したこと、学んだこと。小さな記録は積み重なり、やがて自分だけの時間の地層になります。</p>
+      <dl class="hero-micro-stats" aria-label="書庫の概要">
+        <div><dt>VOLUMES</dt><dd>{String(stats.records).padStart(2, '0')}</dd></div>
+        <div><dt>DAYS</dt><dd>{String(stats.days).padStart(2, '0')}</dd></div>
+        <div><dt>PROJECTS</dt><dd>{String(stats.projects).padStart(2, '0')}</dd></div>
+      </dl>
+    </div>
+
+    <div class="hero-bottom-copy hero-bottom-right hero-anim hero-fade" style="animation-delay:.85s">
+      <p>カーソルを動かすと、岩肌の奥に眠るもう一つの風景が現れます。記録をめくり、過ぎた時間を読み返してください。</p>
+      <div class="hero-actions-premium">
+        <a class="hero-primary-action" href="#catalogue">本棚をひらく <Icon name="arrow" size={18} /></a>
+        <a class="hero-secondary-action" href="/about/">使い方を見る</a>
       </div>
       {latest && (
-        <a class="latest-note" href={recordHref(latest)}>
-          <span>NEW</span>
+        <a class="hero-latest" href={recordHref(latest)}>
+          <span>Latest layer</span>
           <div>
-            <small>{formatDate(latest.data.date)}</small>
+            <time datetime={latest.data.date.toISOString()}>{formatDate(latest.data.date)}</time>
             <strong>{latest.data.title}</strong>
           </div>
-          <Icon name="arrow" size={18} />
+          <Icon name="arrow" size={17} />
         </a>
       )}
     </div>
 
-    <div class="hero-archive" aria-label={`現在の収蔵数は${stats.records}冊です`}>
-      <div class="archive-window">
-        <div class="window-topline"><span>SHIORI ARCHIVE</span><span>EST. {siteConfig.startYear}</span></div>
-        <div class="hero-shelf" aria-hidden="true">
-          <i class="volume-a"></i>
-          <i class="volume-b"></i>
-          <i class="volume-c"></i>
-          <i class="volume-d"></i>
-          <i class="volume-e"></i>
-          <i class="volume-f"></i>
-        </div>
-        <div class="archive-seal">
-          <span>VOLUME</span>
-          <strong>{String(stats.records).padStart(2, '0')}</strong>
-          <small>{siteConfig.owner}</small>
-        </div>
-        <blockquote>“忘れたくない日は、<br />いつでも戻れる場所に。”</blockquote>
-        <div class="window-footer"><span>MEMORY · WORK · LEARNING</span><b>私蔵</b></div>
+    <div class="spotlight-finder" data-spotlight-finder aria-hidden="true"><span></span><small>MOVE TO REVEAL</small></div>
+    <a class="hero-scroll-cue hero-anim hero-fade" style="animation-delay:1.05s" href="#archive-story">
+      <span>SCROLL TO EXPLORE</span><i aria-hidden="true"></i>
+    </a>
+  </section>
+
+  <section class="strata-intro section-shell" id="archive-story">
+    <div class="strata-section-label"><span>01</span><p>THE ARCHIVE IN LAYERS</p><i aria-hidden="true"></i></div>
+    <div class="strata-intro-grid">
+      <h2>今日の一行が、<br /><em>未来の地層</em>になる。</h2>
+      <div class="strata-intro-copy">
+        <p>{siteConfig.profile.shortBio}</p>
+        <p>記録は新しい順にも、年・月・タグ・プロジェクトからも探せます。数冊のときも、数百冊に育ったあとも、同じ書庫として読み返せます。</p>
+        <a class="strata-text-link" href="/about/">Shioriの仕組みを読む <Icon name="arrow" size={17} /></a>
       </div>
     </div>
   </section>
 
-  <div class="section-shell stats-wrap">
-    <StatsStrip stats={stats} />
-  </div>
+  <div class="section-shell strata-stats"><StatsStrip stats={stats} /></div>
 
   {records.length === 0 ? (
     <section class="first-record section-shell" id="catalogue">
@@ -84,8 +111,9 @@ const homeRecords = (recentRecords.length > 0 ? recentRecords : records).slice(0
       <a class="primary-button" href="/about/#add-record">記録の追加方法を見る <Icon name="arrow" size={18} /></a>
     </section>
   ) : (
-    <div id="catalogue">
-      <ArchiveExplorer records={homeRecords} heading="最近の本棚" description={`直近${siteConfig.home.recentMonths}か月の記録。すべては目録から探せます。`} />
+    <div class="catalogue-stage" id="catalogue">
+      <div class="catalogue-stage-heading section-shell" aria-hidden="true"><span>02</span><p>THE SHELVES</p><i></i></div>
+      <ArchiveExplorer records={homeRecords} heading="最近の本棚" description={`直近${siteConfig.home.recentMonths}か月の記録。背表紙から眺めても、言葉から探しても。`} />
       {homeRecords.length < records.length && (
         <div class="section-shell archive-cta">
           <p>この棚には最近の {homeRecords.length} 冊を並べています。</p>
@@ -96,14 +124,9 @@ const homeRecords = (recentRecords.length > 0 ? recentRecords : records).slice(0
   )}
 
   {fallbackFeatured.length > 0 && (
-    <section class="featured-section section-shell">
-      <div class="section-heading">
-        <div>
-          <p class="eyebrow">BOOKMARKED</p>
-          <h2>しおりを挟んだ記録</h2>
-          <p>あとで、もう一度読み返したいページ。</p>
-        </div>
-      </div>
+    <section class="featured-section strata-featured section-shell">
+      <div class="strata-section-label"><span>03</span><p>SELECTED CORES</p><i aria-hidden="true"></i></div>
+      <div class="section-heading"><div><p class="eyebrow">BOOKMARKED</p><h2>深く残った記録</h2><p>もう一度読み返したいページを、地層のコアサンプルのように。</p></div></div>
       <div class="featured-grid">
         {fallbackFeatured.map((entry, index) => {
           const meta = typeMeta[entry.data.type];
@@ -112,8 +135,7 @@ const homeRecords = (recentRecords.length > 0 ? recentRecords : records).slice(0
               <span class="featured-number">0{index + 1}</span>
               <div>
                 <span class={`type-chip book-${meta.color}`}>{meta.icon} {meta.label}</span>
-                <h3>{entry.data.title}</h3>
-                <p>{entry.data.summary}</p>
+                <h3>{entry.data.title}</h3><p>{entry.data.summary}</p>
                 <small>{formatDate(entry.data.date)}{entry.data.project ? ` · ${entry.data.project}` : ''}</small>
               </div>
               <Icon name="arrow" size={20} />
@@ -124,16 +146,83 @@ const homeRecords = (recentRecords.length > 0 ? recentRecords : records).slice(0
     </section>
   )}
 
-  <section class="agent-prompt section-shell">
+  <section class="agent-prompt strata-agent section-shell">
     <div class="prompt-mark" aria-hidden="true"><span>AI</span></div>
-    <div>
-      <p class="eyebrow">A SMALL REPORT IS ENOUGH</p>
-      <h2>「今日これを終えた」と、伝えるだけ。</h2>
-      <p>リポジトリを操作できるAIエージェントが <code>AGENTS.md</code> を読み、日付・タグ・保存先を判断して記録します。</p>
-    </div>
-    <div class="prompt-example">
-      <span>依頼例</span>
-      <p>「今日は検索画面を完成させた。学んだことと完了タスクを開発記録に追加して」</p>
-    </div>
+    <div><p class="eyebrow">A SMALL REPORT IS ENOUGH</p><h2>話す。残る。<br />書庫が育つ。</h2><p>リポジトリを操作できるAIエージェントが <code>AGENTS.md</code> を読み、日付・タグ・保存先を判断して記録します。</p></div>
+    <div class="prompt-example"><span>依頼例</span><p>「今日は検索画面を完成させた。学んだことと完了タスクを開発記録に追加して」</p></div>
   </section>
 </BaseLayout>
+
+<script>
+  const SPOTLIGHT_R = 260;
+  const finePointer = matchMedia('(hover: hover) and (pointer: fine)');
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+
+  document.querySelectorAll<HTMLElement>('[data-immersive-hero]').forEach((hero) => {
+    const finder = hero.querySelector<HTMLElement>('[data-spotlight-finder]');
+    if (!finder) return;
+
+    const mouse = { x: -999, y: -999 };
+    const smooth = { x: -999, y: -999 };
+    let raf = 0;
+    let visible = true;
+    let engaged = false;
+
+    const setPosition = (x: number, y: number) => {
+      hero.style.setProperty('--spot-x', `${x}px`);
+      hero.style.setProperty('--spot-y', `${y}px`);
+      hero.style.setProperty('--spot-radius', `${SPOTLIGHT_R}px`);
+      finder.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+    };
+
+    const useStaticPosition = () => {
+      const rect = hero.getBoundingClientRect();
+      const x = rect.width * (innerWidth < 720 ? .68 : .62);
+      const y = rect.height * (innerWidth < 720 ? .49 : .56);
+      mouse.x = smooth.x = x;
+      mouse.y = smooth.y = y;
+      setPosition(x, y);
+      hero.dataset.spotlight = 'static';
+    };
+
+    const animate = () => {
+      if (visible && finePointer.matches && !reducedMotion.matches) {
+        smooth.x += (mouse.x - smooth.x) * .1;
+        smooth.y += (mouse.y - smooth.y) * .1;
+        setPosition(smooth.x, smooth.y);
+      }
+      raf = requestAnimationFrame(animate);
+    };
+
+    const onPointerMove = (event: PointerEvent) => {
+      if (!finePointer.matches || reducedMotion.matches) return;
+      const rect = hero.getBoundingClientRect();
+      mouse.x = event.clientX - rect.left;
+      mouse.y = event.clientY - rect.top;
+      if (!engaged) {
+        smooth.x = mouse.x;
+        smooth.y = mouse.y;
+        engaged = true;
+      }
+      hero.dataset.spotlight = 'active';
+    };
+
+    const onResize = () => {
+      if (!finePointer.matches || reducedMotion.matches) useStaticPosition();
+    };
+
+    const observer = new IntersectionObserver(([entry]) => { visible = Boolean(entry?.isIntersecting); }, { threshold: .02 });
+    hero.addEventListener('pointermove', onPointerMove, { passive: true });
+    hero.addEventListener('pointerenter', () => { if (finePointer.matches) hero.dataset.spotlight = 'active'; });
+    hero.addEventListener('pointerleave', () => { if (finePointer.matches) hero.dataset.spotlight = engaged ? 'idle' : 'hidden'; });
+    addEventListener('resize', onResize, { passive: true });
+    observer.observe(hero);
+    useStaticPosition();
+    raf = requestAnimationFrame(animate);
+
+    addEventListener('pagehide', () => {
+      cancelAnimationFrame(raf);
+      observer.disconnect();
+    }, { once: true });
+  });
+</script>
