@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "license": "CC0-1.0",
+  "generator": "Deterministic procedural texture generator created for Shiori",
+  "assets": [
+    {
+      "path": "public/assets/textures/walnut-shelf-back.svg",
+      "purpose": "Dark walnut back panel behind books",
+      "dimensions": "1600x760"
+    },
+    {
+      "path": "public/assets/textures/walnut-shelf-plank.svg",
+      "purpose": "Horizontal walnut shelf plank with bevel lighting",
+      "dimensions": "1600x140"
+    },
+    {
+      "path": "public/assets/textures/walnut-frame.svg",
+      "purpose": "Vertical walnut cabinet frame",
+      "dimensions": "240x1200"
+    }
+  ]
+}

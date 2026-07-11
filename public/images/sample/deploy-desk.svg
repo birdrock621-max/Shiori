@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+  <title id="title">A desk during the first deployment</title>
+  <desc id="desc">A laptop and stacked books rest on a wooden desk beside an evening window.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#728fa0"/><stop offset="1" stop-color="#d8b184"/></linearGradient>
+    <linearGradient id="wall" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#efe5d3"/><stop offset="1" stop-color="#cfc5b5"/></linearGradient>
+    <linearGradient id="desk" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#8d5d3f"/><stop offset="1" stop-color="#563726"/></linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="18" stdDeviation="20" flood-opacity=".2"/></filter>
+  </defs>
+  <rect width="1200" height="800" fill="url(#wall)"/>
+  <rect x="80" y="70" width="470" height="390" rx="12" fill="#5c5148"/>
+  <rect x="102" y="92" width="426" height="346" fill="url(#sky)"/>
+  <circle cx="430" cy="170" r="60" fill="#f6d7a0" opacity=".78"/>
+  <path d="M102 360c95-50 165-42 240-6 80 38 128 20 186-15v99H102Z" fill="#425e54" opacity=".72"/>
+  <path d="M770 0h430v430c-112-18-214-8-306 26-54 20-96-11-124-62Z" fill="#ded4c5"/>
+  <rect y="535" width="1200" height="265" fill="url(#desk)"/>
+  <path d="M0 624c210-28 430-7 615 10 210 20 404-11 585-47" fill="none" stroke="#b2815f" stroke-width="6" opacity=".35"/>
+  <g filter="url(#shadow)">
+    <rect x="370" y="300" width="460" height="285" rx="20" fill="#3d4144"/>
+    <rect x="393" y="324" width="414" height="230" rx="8" fill="#17272b"/>
+    <path d="M434 384h160M434 420h260M434 456h220M434 492h120" stroke="#9ec7b9" stroke-width="13" stroke-linecap="round" opacity=".9"/>
+    <path d="M320 585h560l65 70H255Z" fill="#5b6062"/>
+    <path d="M255 655h690" stroke="#202426" stroke-width="8"/>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="875" y="390" width="210" height="55" rx="4" fill="#7d3c32"/>
+    <rect x="900" y="335" width="185" height="55" rx="4" fill="#315f62"/>
+    <rect x="860" y="278" width="225" height="57" rx="4" fill="#c18a43"/>
+    <path d="M885 292h130M920 350h115M900 406h120" stroke="#f2e6d3" stroke-width="6" opacity=".7"/>
+  </g>
+  <g transform="translate(118 410)" filter="url(#shadow)">
+    <path d="M0 80h170l-18 115H24Z" fill="#e7e0d4"/>
+    <path d="M18 80c0-48 132-48 134 0" fill="#fff8eb" stroke="#6c5a4a" stroke-width="8"/>
+    <path d="M170 102h22c46 0 46 73 0 73h-31" fill="none" stroke="#e7e0d4" stroke-width="22"/>
+    <path d="M48 62c-8-28 8-42 2-62M92 60c-8-28 9-42 3-61" fill="none" stroke="#d5c3ad" stroke-width="8" stroke-linecap="round" opacity=".8"/>
+  </g>
+  <circle cx="1080" cy="130" r="18" fill="#b85c4b"/>
+  <circle cx="1120" cy="95" r="10" fill="#315f62"/>
+</svg>

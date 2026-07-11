@@ -1,0 +1,61 @@
+name: Bug report
+description: Report a display, build, content, localization, or interaction problem
+title: "[Bug] "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you. Do not paste secrets or real private journal content. Generalize sample data. Use the private process in SECURITY.md for vulnerabilities.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Explain the expected and actual result.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+      placeholder: |
+        1. Open …
+        2. Select …
+        3. Observe …
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Cloudflare deployment or build
+        - Home hero or bookshelf
+        - Archive, search, filtering, or sorting
+        - Record rendering or Markdown
+        - Interface localization or content language
+        - AGENTS.md or AI record workflow
+        - Accessibility
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Browser, OS, device, Node.js version, and interface/content language when relevant.
+  - type: textarea
+    id: logs
+    attributes:
+      label: Sanitized error or log
+      description: Remove tokens, private URLs, personal data, and private record text.
+      render: shell
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Safety check
+      options:
+        - label: I removed secrets and private personal information.
+          required: true
+        - label: This is not a public vulnerability disclosure.
+          required: true

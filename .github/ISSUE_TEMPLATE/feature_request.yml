@@ -1,0 +1,48 @@
+name: Feature request
+description: Propose an improvement to the Shiori experience
+title: "[Feature] "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: situation
+    attributes:
+      label: User problem
+      description: Who is affected, and in what situation?
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Desired outcome
+      description: Describe the experience after the problem is solved, not only an implementation.
+    validations:
+      required: true
+  - type: textarea
+    id: languages
+    attributes:
+      label: Language and script considerations
+      description: Consider non-English content, long translations, Unicode search, and RTL scripts where relevant.
+  - type: dropdown
+    id: setup
+    attributes:
+      label: Does this add required setup?
+      options:
+        - No
+        - Possibly
+        - Yes
+        - Unsure
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Current workaround or alternatives
+  - type: checkboxes
+    id: principles
+    attributes:
+      label: Project principles
+      options:
+        - label: Markdown remains portable.
+        - label: The proposal considers mobile and desktop.
+        - label: The proposal considers empty and large archives.
+        - label: The proposal has a keyboard and accessibility story.

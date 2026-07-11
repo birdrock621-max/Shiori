@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security report
+    url: https://github.com/birdrock621-max/Shiori/security
+    about: Do not disclose vulnerabilities publicly. Read the security policy first.
+  - name: Setup documentation
+    url: https://github.com/birdrock621-max/Shiori#publish-in-five-minutes
+    about: Review the Cloudflare setup and troubleshooting guide.

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="1200" viewBox="0 0 240 1200" preserveAspectRatio="none">
+  <defs>
+    <linearGradient id="frame" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#170e0a"/><stop offset=".12" stop-color="#53331f"/><stop offset=".28" stop-color="#8c5b36"/><stop offset=".44" stop-color="#4d2c1c"/><stop offset=".68" stop-color="#6c4027"/><stop offset=".88" stop-color="#2d1911"/><stop offset="1" stop-color="#0d0907"/></linearGradient>
+    <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".015 .045" numOctaves="4" seed="37" result="n"/><feColorMatrix in="n" values=".65 0 0 0 .15 .22 0 0 0 .07 .08 0 0 0 .02 0 0 0 .5 0" result="w"/><feBlend in="SourceGraphic" in2="w" mode="soft-light"/></filter>
+  </defs>
+  <rect width="240" height="1200" fill="url(#frame)" filter="url(#grain)"/>
+  <g fill="none" stroke-linecap="round"><path d="M24 0C70 175 10 330 55 510s-7 345 34 690M104 0c-31 190 37 340-8 565s28 405-3 635M181 0c36 165-24 350 12 525s-18 440 17 675" stroke="#e4ae73" stroke-opacity=".12" stroke-width="3"/><path d="M8 0c28 210-13 400 22 610s-8 395 25 590M150 0c-26 195 20 390-15 600s26 414-2 600M224 0c-22 190 12 405-18 610s11 390-13 590" stroke="#0b0705" stroke-opacity=".48" stroke-width="5"/></g>
+  <path d="M4 0V1200M233 0V1200" stroke="#e4b17c" stroke-opacity=".18" stroke-width="7"/><rect x="0" y="0" width="240" height="1200" fill="none" stroke="#090604" stroke-opacity=".6" stroke-width="12"/>
+</svg>

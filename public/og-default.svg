@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#070907"/><stop offset=".58" stop-color="#151b14"/><stop offset="1" stop-color="#28180f"/></linearGradient>
+    <filter id="rock"><feTurbulence type="fractalNoise" baseFrequency=".012" numOctaves="4" seed="9"/><feColorMatrix values=".32 0 0 0 .1 .28 0 0 0 .08 .2 0 0 0 .05 0 0 0 .42 0"/></filter>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/><rect width="1200" height="630" filter="url(#rock)" opacity=".34"/>
+  <g opacity=".8" fill="none" stroke="#d08a50"><path d="M0 474C230 400 365 520 592 448s402 62 608-16"/><path d="M0 515c208-56 390 42 604-22s388 48 596-7" opacity=".45"/><path d="M0 557c248-42 402 28 625-18s375 31 575 3" opacity=".22"/></g>
+  <g transform="translate(76 72)"><path d="M80 80H40L0 40h40zm0-40H40L0 0h40z" fill="#f4ede0"/><text x="104" y="66" fill="#f4ede0" font-family="Georgia,serif" font-size="56" font-style="italic">Shiori</text></g>
+  <text x="76" y="297" fill="#f4ede0" font-family="Inter,Arial,sans-serif" font-size="80" font-weight="500" letter-spacing="-4">A living archive,</text>
+  <text x="76" y="386" fill="#f4ede0" font-family="Georgia,serif" font-size="88" font-style="italic">layer by layer.</text>
+  <text x="80" y="447" fill="#d7d0c2" font-family="Inter,Arial,sans-serif" font-size="24" letter-spacing="4">MARKDOWN · MULTILINGUAL · STATIC</text>
+  <circle cx="1090" cy="96" r="15" fill="#e8702a"/>
+</svg>
