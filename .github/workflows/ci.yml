@@ -36,6 +36,25 @@ jobs:
           include-hidden-files: true
           retention-days: 1
 
+      - name: Download exact hero assets for visual audit
+        shell: bash
+        run: |
+          mkdir -p /tmp/shiori-hero-assets
+          curl --fail --location --retry 3 \
+            'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260609_195923_b0ba8ace-1d1d-4f2c-9a28-1ab84b330680.png&w=1280&q=85' \
+            --output /tmp/shiori-hero-assets/strata-base.webp
+          curl --fail --location --retry 3 \
+            'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260609_201152_bba90a12-bf12-459f-91f0-51f237dbaf3b.png&w=1280&q=85' \
+            --output /tmp/shiori-hero-assets/strata-reveal.webp
+          file /tmp/shiori-hero-assets/*.webp
+
+      - name: Export exact hero assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: shiori-exact-hero-assets-${{ github.sha }}
+          path: /tmp/shiori-hero-assets
+          retention-days: 1
+
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
