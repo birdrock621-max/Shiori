@@ -24,6 +24,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Export source snapshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: shiori-source-${{ github.sha }}
+          path: |
+            .
+            !.git/**
+            !node_modules/**
+            !dist/**
+          include-hidden-files: true
+          retention-days: 1
+
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
