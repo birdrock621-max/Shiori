@@ -1,4 +1,4 @@
-# Shiori
+<img width="1774" height="887" alt="ChatGPT Image 2026年7月10日 22_34_28" src="https://github.com/user-attachments/assets/9ae05608-3082-4986-817a-71ef672f6606" />
 
 日記、完了タスク、学習記録、開発ログを、育っていく「本棚」として読むための静的サイトです。
 
