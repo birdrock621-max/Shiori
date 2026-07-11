@@ -75,16 +75,31 @@ const isHome = path === '/';
     const toggle = header.querySelector<HTMLButtonElement>('[data-menu-toggle]');
     const panel = header.querySelector<HTMLElement>('[data-mobile-navigation]');
     if (!toggle || !panel) return;
-    const main = document.querySelector<HTMLElement>('main');
-    const footer = document.querySelector<HTMLElement>('footer');
-    const setPageInert = (inert: boolean) => [main, footer].forEach((element) => { if (!element) return; if (inert) element.setAttribute('inert', ''); else element.removeAttribute('inert'); });
+    const setPageInert = (inert: boolean) => {
+      const pageRegions = [
+        document.querySelector<HTMLElement>('main'),
+        document.querySelector<HTMLElement>('footer'),
+      ];
+      pageRegions.forEach((element) => {
+        if (!element) return;
+        if (inert) element.setAttribute('inert', '');
+        else element.removeAttribute('inert');
+      });
+    };
     const closeMenu = (restoreFocus = false) => { panel.hidden = true; header.classList.remove('menu-is-open'); toggle.setAttribute('aria-expanded', 'false'); toggle.setAttribute('aria-label', 'メニューを開く'); document.documentElement.classList.remove('menu-lock'); setPageInert(false); if (restoreFocus) toggle.focus(); };
     const openMenu = () => { panel.hidden = false; header.classList.add('menu-is-open'); toggle.setAttribute('aria-expanded', 'true'); toggle.setAttribute('aria-label', 'メニューを閉じる'); document.documentElement.classList.add('menu-lock'); setPageInert(true); panel.querySelector<HTMLAnchorElement>('a')?.focus(); };
     toggle.addEventListener('click', () => toggle.getAttribute('aria-expanded') === 'true' ? closeMenu() : openMenu());
     panel.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => closeMenu()));
     document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && !panel.hidden) closeMenu(true); });
-    const updateHeader = () => { const hero = document.querySelector<HTMLElement>('[data-immersive-hero]'); header.classList.toggle('is-scrolled', Boolean(hero && hero.getBoundingClientRect().bottom <= 92)); };
-    updateHeader();
+    const updateHeader = () => {
+      const hero = document.querySelector<HTMLElement>('[data-immersive-hero]');
+      header.classList.toggle('is-scrolled', Boolean(hero && hero.getBoundingClientRect().bottom <= 92));
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', updateHeader, { once: true });
+    } else {
+      updateHeader();
+    }
     addEventListener('scroll', updateHeader, { passive: true });
     addEventListener('resize', () => { updateHeader(); if (innerWidth > 760 && !panel.hidden) closeMenu(); }, { passive: true });
   });
