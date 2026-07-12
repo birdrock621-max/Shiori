@@ -1,0 +1,63 @@
+name: Final branch cleanup
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: final-branch-cleanup
+  cancel-in-progress: false
+
+env:
+  TARGET_BRANCH: ${{ github.head_ref }}
+
+jobs:
+  clean:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out cleanup branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TARGET_BRANCH }}
+
+      - name: Delete stale work branches
+        shell: bash
+        run: |
+          set -euo pipefail
+          deleted=0
+          failed=0
+
+          while read -r _ ref; do
+            branch="${ref#refs/heads/}"
+            case "$branch" in
+              main|"${TARGET_BRANCH}")
+                continue
+                ;;
+              agent/*|codex/*|release/*|dependabot/*|review)
+                if git push origin --delete "$branch"; then
+                  echo "Deleted $branch"
+                  deleted=$((deleted + 1))
+                else
+                  echo "Failed to delete $branch" >&2
+                  failed=$((failed + 1))
+                fi
+                ;;
+            esac
+          done < <(git ls-remote --heads origin)
+
+          echo "Deleted stale branches: $deleted" >> "$GITHUB_STEP_SUMMARY"
+          echo "Failed deletions: $failed" >> "$GITHUB_STEP_SUMMARY"
+
+          if [ "$failed" -ne 0 ]; then
+            exit 1
+          fi
+
+      - name: Delete cleanup branch
+        shell: bash
+        run: git push origin --delete "${TARGET_BRANCH}"
